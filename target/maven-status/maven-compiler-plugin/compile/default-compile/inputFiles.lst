@@ -1,0 +1,12 @@
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/TaskController.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/TaskEntity.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/TaskProcessorApplication.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/TaskRepository.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/TaskService.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/config/AppConfig.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/config/WebClientConfig.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/dto/ErrorResponse.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/dto/TaskDto.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/exception/BaseException.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/exception/GlobalExceptionHandler.java
+/workspaces/task-processor/src/main/java/com/example/taskprocessor/exception/TaskNotFoundException.java

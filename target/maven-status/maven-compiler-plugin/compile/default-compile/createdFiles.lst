@@ -1,0 +1,13 @@
+com/example/taskprocessor/TaskEntity.class
+com/example/taskprocessor/TaskRepository.class
+com/example/taskprocessor/config/AppConfig.class
+com/example/taskprocessor/exception/TaskNotFoundException.class
+com/example/taskprocessor/TaskProcessorApplication.class
+com/example/taskprocessor/exception/GlobalExceptionHandler.class
+com/example/taskprocessor/dto/TaskDto.class
+com/example/taskprocessor/TaskService.class
+com/example/taskprocessor/exception/BaseException.class
+com/example/taskprocessor/TaskController.class
+com/example/taskprocessor/dto/ErrorResponse.class
+com/example/taskprocessor/config/WebClientConfig.class
+com/example/taskprocessor/dto/ErrorResponse$ErrorResponseBuilder.class
