@@ -1,7 +1,6 @@
 package com.example.taskprocessor;
 
 import com.example.taskprocessor.exception.*;
-import jakarta.annotation.PostConstruct;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
