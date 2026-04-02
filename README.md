@@ -52,18 +52,25 @@ java -jar target/*.jar
 - `GET /api/tasks/{id}` — Retrieve a task (cached)
 
 ## Security
+<<<<<<< HEAD
 - HTTP Basic authentication is enabled for all endpoints.
 - Configure users/roles as needed in the security config.
+=======
+- HTTP Basic authentication is enabled for endpoints.
+>>>>>>> 287a90fbedcb58079f1ce692d56402047735593c
 
 ## Testing
 ```
 mvn test
 ```
 
+<<<<<<< HEAD
 ## Notes
 - Caching uses Caffeine with a 10-minute TTL.
 - Scheduled tasks process the queue every 5 seconds.
 - Centralized error handling via `@ControllerAdvice`.
 
+=======
+>>>>>>> 287a90fbedcb58079f1ce692d56402047735593c
 ---
 
