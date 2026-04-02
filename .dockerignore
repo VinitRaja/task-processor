@@ -1,0 +1,16 @@
+target/
+.git
+.gitignore
+.mvn
+mvnw
+mvnw.cmd
+README.md
+HELP.md
+GIT_GUIDE.md
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+node_modules/
