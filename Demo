@@ -1,0 +1,132 @@
+/*
+____Request Flow_______
+HTTP Request (POST /api/tasks)
+    ↓
+TaskController.submitTask()
+    ↓
+Request Validation (Bean Validation)
+    ↓
+TaskService.submitTask()
+    ↓
+TaskEntity persisted to MySQL
+    ↓
+HTTP Response (202 Accepted)
+
+_____Data Flow & Components_____
+
+A. Entry Point: TaskController
+Endpoint: POST /api/tasks - Accepts JSON task submission
+Endpoint: GET /api/tasks/{id} - Retrieves cached task data
+Security: HTTP Basic Authentication (via SecurityConfig)
+Validation: Bean Validation annotations on TaskDto
+
+B. Service Layer: TaskService
+Receives validated TaskDto from controller
+Converts DTO → TaskEntity
+Persists to MySQL via TaskRepository (JPA)
+Returns task response to client
+
+C. Data Persistence: TaskEntity + TaskRepository
+TaskEntity: JPA entity mapped to tasks table in MySQL
+TaskRepository: Spring Data JPA interface for CRUD operations
+Database: MySQL 8+ with automatic schema creation (ddl-auto=update)
+
+D. Async queue processing
+
+Scheduled Task (@Scheduled, runs every 5 seconds)
+    ↓
+Polls TaskRepository for pending tasks
+    ↓
+Prepares HTTPS POST request
+    ↓
+WebClient sends async HTTP POST to external URL
+    ↓
+Updates task status on success/failure
+    ↓
+Persists status back to database
+
+E. Caching Layer: Caffeine
+GET /api/tasks/{id} request
+Checks Caffeine cache first (10-min TTL)
+Cache hit → Returns cached TaskDto
+Cache miss → Queries database → Caches result → Returns
+
+
+____Complete Data Flow Diagram____
+
+┌─────────────────────────────────────────────────────────────┐
+│                    CLIENT (HTTP)                             │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+         ┌─────────────┴──────────────┐
+         │                            │
+    POST /api/tasks              GET /api/tasks/{id}
+    (Submit Task)                (Retrieve Task)
+         │                            │
+         ↓                            ↓
+    ┌─────────────────────────────────────────────────────┐
+    │         TaskController                              │
+    │  • @PostMapping("/api/tasks")                       │
+    │  • @GetMapping("/api/tasks/{id}")                   │
+    │  • HTTP Basic Auth enforced                         │
+    └─────────────┬───────────────────────────┬───────────┘
+                  │                           │
+         ┌────────▼────────┐        ┌────────▼────────┐
+         │ TaskService     │        │ Cache Check     │
+         │                 │        │ (Caffeine)      │
+         │ submitTask()    │        │                 │
+         │ getTask()       │        │ TTL: 10 min     │
+         └────────┬────────┘        └────────┬────────┘
+                  │                          │
+         ┌────────▼──────────────────────────▼────────┐
+         │    TaskRepository (JPA)                     │
+         │  • save(TaskEntity)                        │
+         │  • findById()                              │
+         │  • findByStatus()                          │
+         └────────┬──────────────────────────────────┘
+                  │
+         ┌────────▼──────────────────────────────────┐
+         │    MySQL Database (taskdb)                 │
+         │  • tasks table                             │
+         │  • Columns: id, title, status, etc.        │
+         └────────┬──────────────────────────────────┘
+                  │
+    ┌─────────────┴──────────────────┐
+    │                                 │
+    │  ┌──────────────────────────────▼─────────┐
+    │  │  Scheduled Task Processor                │
+    │  │  @Scheduled(fixedRate = 5000ms)          │
+    │  │                                          │
+    │  │  1. Query pending tasks                  │
+    │  │  2. Prepare HTTPS POST payload           │
+    │  │  3. Send via WebClient (async)           │
+    │  │  4. Update status (PROCESSING/COMPLETED) │
+    │  │  5. Persist to database                  │
+    │  └──────────────────────────────┬───────────┘
+    │                                  │
+    │                         ┌────────▼────────┐
+    │                         │ External HTTPS  │
+    │                         │ Endpoint        │
+    │                         │ (User configured)
+    │                         └─────────────────┘
+    │
+    └──────────────────────────────────────────────
+
+____Key Configuration Classes___
+
+SecurityConfig.java
+// HTTP Basic Authentication
+// Protects all /api/** endpoints
+// Users must provide username:password
+
+CacheConfig.java
+// Caffeine cache configuration
+// 10-minute expiration for task retrieval
+// Reduces database queries
+
+WebClientConfig.java
+// Non-blocking HTTP client for async requests
+// Used by scheduled task to POST to external URL
+// Handles timeouts and retries
+
+*/
